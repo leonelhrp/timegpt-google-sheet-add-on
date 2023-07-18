@@ -11,3 +11,7 @@
 # ignore even valid files if in…
 .git/**
 node_modules/**
+
+# include directories and their content
+!ui/
+!functions/

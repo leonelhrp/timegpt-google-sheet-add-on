@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      h2 {
+        color: #1F2937;
+      }
+      label {
+        font-weight: bold;
+      }
+      input[type="text"], select, .range-button {
+        box-sizing: border-box;
+        height: 2rem;
+        padding: 0.5rem;
+        border: 1px solid #E5E7EB;
+        border-radius: 0.375rem;
+        margin: 0.25rem 0;
+      }
+      input#from {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-right: none;
+        width: 50%;
+      }
+      input#to {
+        border-radius: 0;
+        width: 50%;
+      }
+      #loading {
+        display: none;
+        width: 50px;
+        height: 50px;
+        border: 3px solid #E5E7EB;
+        border-radius: 50%;
+        border-top-color: #10B981;
+        animation: spin 1s ease-in-out infinite;
+        -webkit-animation: spin 1s ease-in-out infinite;
+      }
+      @keyframes spin {
+        to { -webkit-transform: rotate(360deg); }
+      }
+      @-webkit-keyframes spin {
+        to { -webkit-transform: rotate(360deg); }
+      }
+      #submit-button {
+        background-color: #3B82F6;
+        color: white;
+        padding: 10px 20px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+      }
+      #submit-button[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .error-message {
+        color: #EF4444;
+        font-size: 0.8em;
+        margin-bottom: 5px;
+      }
+      .flex-container {
+        display: flex;
+        justify-content: space-between; 
+        align-items: center;
+      }
+      .range-button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        padding: 0.5rem;
+        border: 1px solid #E5E7EB;
+        background-color: #F3F4F6;
+        color: #1F2937;
+        cursor: pointer;
+        height: 2rem;
+        width: 10%;
+      }
+      #range-error {
+        display: none;
+      }
+      .info {
+        padding: 15px;
+        margin-bottom: 20px;
+        color: #1F2937;
+        background-color: #DBEAFE;
+        border: 1px solid #93C5FD;
+        border-radius: 0.375rem;
+        font-size: 0.7em;
+      }
+    </style>
+    <script>
+      function submitForm() {
+        const range = document.getElementById('range').value;
+        const sensibility = document.getElementById('sensibility').value;
+        const chartType = document.getElementById('chart-type').value;
+
+        document.getElementById('loading').style.display = 'flex';
+
+        google.script.run.withSuccessHandler(function(outputData) {
+          document.getElementById('loading').style.display = 'none';
+          google.script.run.createAndInsertChart('Anomaly', chartType, outputData);
+        }).NIXTLA_AUTOML_ANOMALY(range, sensibility);
+      }
+      function setSelectedRange() {
+        const fromInput = document.getElementById('from');
+        const toInput = document.getElementById('to');
+        const rangeError = document.getElementById('range-error');
+
+        google.script.run.withFailureHandler(function(error) {
+          // Mostrar un mensaje de error si la función de Apps Script arroja un error
+          fromInput.value = '';
+          toInput.value = '';
+          rangeError.style.display = 'block'
+          rangeError.textContent = error.message;
+        }).withSuccessHandler(function(range) {
+          let [from, to] = range.split(':');
+          fromInput.value = from;
+          toInput.value = to;
+          rangeError.textContent = '';
+          rangeError.style.display = 'none'
+        }).getSelectedRange();
+      }
+    </script>
+  </head>
+  <body>
+    <form id="anomaly-form">
+      <p class="info">Please use the 'Select Range' button to provide the required data range. Once selected, specify the 'Sensibility', and select the 'Chart Type' to generate your anomaly detection and its respective chart.</p>
+      <div class="flex-container">
+        <div id="loading"></div>
+      </div>
+      <div class="flex-container">
+        <input type="text" id="from" name="from" placeholder="From">
+        <input type="text" id="to" name="to" placeholder="To">
+        <button type="button" onclick="setSelectedRange()" title="Use Selected Range" class="range-button">⌖</button>
+      </div>
+      <span id="range-error" class="error-message"></span>
+      <div class="flex-container">
+        <input type="text" id="sensibility" name="sensibility" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="Enter Sensibility">
+        <select id="chart-type" name="chart-type">
+          <option value="COLUMN">Column Chart</option>
+          <option value="LINE">Line Chart</option>
+          <option value="AREA">Area Chart</option>
+        </select>
+      </div>
+      <div id="loading"></div>
+      <input id="submit-button" type="button" value="Get Anomaly" onclick="submitForm()" disabled><br><br>
+    </form>
+  </body>
+</html>
+
+
