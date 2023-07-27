@@ -1,13 +1,26 @@
-function NIXTLA_AUTOML_FORECAST(range, fh) {
+const API_BASE_URL = 'https://dashboard.nixtla.io/api';
+
+function getRequestData(range, type) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   let data = sheet.getRange(range).getValues();
   const startRow = data.findIndex(row => row[0].toLowerCase() === 'timestamp' && row[1].toLowerCase() === 'value') + 1;
 
   data = data.slice(startRow);
 
-  const timestamp = data.map(row => row[0]);
-  const value = data.map(row => row[1]);
+  console.log('getRequestData: ', JSON.stringify({
+    range,
+    type,
+    data
+  }, null, 2));
 
+  const requestData = {
+    known: transformedArray(data),
+  };
+
+  return requestData;
+}
+
+function apiPostRequest(path, requestData) {
   const options = {
     method: 'POST',
     headers: {
@@ -15,57 +28,47 @@ function NIXTLA_AUTOML_FORECAST(range, fh) {
       'content-type': 'application/json',
       authorization: `Bearer ${TOKEN}`
     },
-    payload: JSON.stringify({
-      fh: Number(fh),
-      timestamp: timestamp,
-      value: value
-    })
+    payload: JSON.stringify(requestData),
+    muteHttpExceptions: false
   };
 
-  const response = UrlFetchApp.fetch('http://dashboard.nixtla.io/api/automl_forecast', options);
+  const response = UrlFetchApp.fetch(`${API_BASE_URL}${path}`, options);
   const responseData = JSON.parse(response.getContentText());
 
-  const { timestamp: forecastTimestamp, value: forecastValue, lo: forecastLo, hi: forecastHi } = responseData.data;
+  return responseData;
+}
 
-  const outputData = forecastTimestamp.map((_, i) => [forecastTimestamp[i], forecastValue[i], forecastLo[i], forecastHi[i]]);
+function prepareResponseData(responseData) {
+  const data = [...responseData.data.input, ...responseData.data.output]
+    .map(item => ({ ...item, timestamp: formatDate(item.timestamp) }))
+    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
-  outputData.unshift(['Timestamp', 'Value', 'Lo', 'Hi']);
+  const outputData = data.map(({ timestamp, value, low = 0, high = 0 }) => [timestamp, value, low, high]);
+  outputData.unshift(['Timestamp', 'Value', 'Low', 'High']);
 
   return outputData;
 }
 
+function NIXTLA_AUTOML_FORECAST(range, fh) {
+  let requestData = getRequestData(range, 'forecast');
+  requestData.forecasts = Number(fh);
+
+  console.log('NIXTLA_AUTOML_FORECAST -> requestData: ', JSON.stringify(requestData, null, 2));
+
+  const responseData = apiPostRequest('/automl_forecast', requestData);
+  const forecastData = prepareResponseData(responseData);
+
+  return forecastData;
+}
+
 function NIXTLA_AUTOML_ANOMALY(range, sensibility) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  let data = sheet.getRange(range).getValues();
-  const startRow = data.findIndex(row => row[0] === 'timestamp' && row[1] === 'value') + 1;
+  let requestData = getRequestData(range, 'anomaly');
+  requestData.sensibility = Number(sensibility);
 
-  data = data.slice(startRow);
+  console.log('NIXTLA_AUTOML_ANOMALY -> requestData: ', JSON.stringify(requestData, null, 2));
 
-  const timestamp = data.map(row => row[0]);
-  const value = data.map(row => row[1]);
+  const responseData = apiPostRequest('/automl_anomaly', requestData);
+  const anomalyData = prepareResponseData(responseData);
 
-  const options = {
-    method: 'POST',
-    headers: {
-      accept: 'application/json',
-      'content-type': 'application/json',
-      authorization: `Bearer ${TOKEN}`
-    },
-    payload: JSON.stringify({
-      sensibility: Number(sensibility),
-      timestamp: timestamp,
-      value: value
-    })
-  };
-
-  const response = UrlFetchApp.fetch('http://dashboard.nixtla.io/api/automl_anomaly', options);
-  const responseData = JSON.parse(response.getContentText());
-
-  const { timestamp_insample, lo, hi } = responseData.data;
-
-  const outputData = timestamp_insample.map((_, i) => [timestamp_insample[i], lo[i], hi[i]]);
-
-  outputData.unshift(['Timestamp', 'Lo', 'Hi']);
-
-  return outputData;
+  return anomalyData;
 }
