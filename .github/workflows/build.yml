@@ -1,62 +1,93 @@
-name: CI - Build TIMEGPT.gs
+name: CI - Build and Release TIMEGPT.gs
 
 on:
   release:
     types: [published]
 
 jobs:
-  build:
-    name: Build all-in-one TIMEGPT.gs file
+  build_and_release:
+    name: Build and Release TIMEGPT.gs
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3 # Updated version
+    # Checkout the repository
+    - name: Checkout Repository
+      uses: actions/checkout@v3
 
-      - name: Build TIMEGPT.gs
-        id: build_file
-        run: |
-          filename=TIMEGPT.gs
-          filepath=_build/$filename
-          tmpfile=_build/tmp.gs
-          mkdir _build
-          find . -type f \( -iname "*.gs" ! -iname "config.gs" ! -iname "main.gs" ! -iname "tmp.gs" \) -exec cat > $tmpfile {} +
-          cat config.gs > $filepath
-          printf "\n\n/////////////////////////////////////\n\n" >> $filepath
-          cat main.gs >> $filepath
-          printf "\n\n/////////////////////////////////////\n\n" >> $filepath
-          cat $tmpfile >> $filepath
-          echo "$filename generated!"
-          echo "filename=$filename" >> $GITHUB_ENV # Updated for environment file
-          echo "filepath=$filepath" >> $GITHUB_ENV # Updated for environment file
+    # Build the TIMEGPT.gs file
+    - name: Build TIMEGPT.gs
+      id: build_script
+      run: |
+        filename=TIMEGPT.gs
+        filepath=_build/$filename
+        tmpfile=_build/tmp.gs
+        mkdir -p _build
+        find . -type f \( -iname "*.gs" ! -iname "config.gs" ! -iname "main.gs" ! -iname "tmp.gs" \) -exec cat > $tmpfile {} +
+        cat config.gs > $filepath
+        echo "\n\n/////////////////////////////////////\n\n" >> $filepath
+        cat main.gs >> $filepath
+        echo "\n\n/////////////////////////////////////\n\n" >> $filepath
+        cat $tmpfile >> $filepath
+        echo "File $filename generated!"
+        echo "FILENAME=$filename" >> $GITHUB_ENV
+        echo "FILEPATH=$filepath" >> $GITHUB_ENV
 
-      - name: Upload TIMEGPT.gs as artifact
-        uses: actions/upload-artifact@v2 # Updated version
-        with:
-          name: ${{ steps.build_file.outputs.filename }}
-          path: ${{ steps.build_file.outputs.filepath }}
-      - name: Upload appsscript.json as artifact
-        uses: actions/upload-artifact@v2 # Updated version
-        with:
-          name: appsscript.json
-          path: appsscript.json
+    # Upload the built TIMEGPT.gs as an artifact
+    - name: Upload TIMEGPT.gs as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ env.FILENAME }}
+        path: ${{ env.FILEPATH }}
 
-      - name: Upload TIMEGPT.gs as release asset
-        id: upload_release
-        uses: actions/upload-release-asset@v1.0.2 # Explicit version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_name: ${{ steps.build_file.outputs.filename }}
-          asset_path: ${{ steps.build_file.outputs.filepath }}
-          asset_content_type: application/javascript
-      - name: Upload appsscript.json as release asset
-        id: upload_appsscript
-        uses: actions/upload-release-asset@v1.0.2 # Explicit version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_name: appsscript.json
-          asset_path: appsscript.json
-          asset_content_type: application/json
+    # Upload the appsscript.json as an artifact
+    - name: Upload appsscript.json as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: appsscript.json
+        path: ./appsscript.json
+
+    # Attach the built TIMEGPT.gs as a release asset
+    - name: Upload TIMEGPT.gs as release asset
+      uses: actions/github-script@v5
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const path = "${{ env.FILEPATH }}";
+          const asset_name = "${{ env.FILENAME }}";
+          const content_type = "application/javascript";
+
+          const asset = await github.repos.uploadReleaseAsset({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            release_id: context.payload.release.id,
+            name: asset_name,
+            data: fs.readFileSync(path),
+            headers: {
+              "content-length": fs.statSync(path).size,
+              "content-type": content_type,
+            },
+          });
+
+    # Attach the appsscript.json as a release asset
+    - name: Upload appsscript.json as release asset
+      uses: actions/github-script@v5
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const path = "./appsscript.json";
+          const asset_name = "appsscript.json";
+          const content_type = "application/json";
+
+          const asset = await github.repos.uploadReleaseAsset({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            release_id: context.payload.release.id,
+            name: asset_name,
+            data: fs.readFileSync(path),
+            headers: {
+              "content-length": fs.statSync(path).size,
+              "content-type": content_type,
+            },
+          });
