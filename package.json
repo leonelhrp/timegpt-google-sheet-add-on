@@ -1,11 +1,11 @@
 {
-  "name": "nixtla-google-sheet-extension",
+  "name": "timegpt-google-sheet-add-on",
   "version": "1.0.3",
   "description": "TimeGPT extension for Google Sheets",
   "main": "main.gs",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/leonelhrp/nixtla-google-sheet-extension.git"
+    "url": "git+https://github.com/leonelhrp/timegpt-google-sheet-add-on.git"
   },
   "keywords": [
     "nixtla",
@@ -18,9 +18,9 @@
   "author": "leonelhrp",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/leonelhrp/nixtla-google-sheet-extension/issues"
+    "url": "https://github.com/leonelhrp/timegpt-google-sheet-add-on/issues"
   },
-  "homepage": "https://github.com/leonelhrp/nixtla-google-sheet-extension#readme",
+  "homepage": "https://github.com/leonelhrp/timegpt-google-sheet-add-on#readme",
   "devDependencies": {
     "@google/clasp": "^2.4.2"
   }

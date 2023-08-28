@@ -11,7 +11,7 @@
   "addOns": {
     "common": {
       "name": "TimeGPT Google Sheets",
-      "logoUrl": "https://raw.githubusercontent.com/leonelhrp/nixtla-google-sheet-extension/main/img/nixtla-google-sheets-logo.png"
+      "logoUrl": "https://raw.githubusercontent.com/leonelhrp/timegpt-google-sheet-add-on/main/img/nixtla-google-sheets-logo.png"
     },
     "sheets": {
       "homepageTrigger": {

@@ -41,7 +41,7 @@ Once you've ticked off these preliminary steps, you're all set to leverage the p
 
 ### (Option 1) From Google Workspace Marketplace
 
-Visit the [Google Workspace Marketplace](https://workspace.google.com/marketplace/app/nixtla-google-sheet-extension) and install the TimeGPT Google Sheets Add-On.
+Visit the [Google Workspace Marketplace](https://workspace.google.com/marketplace/app/timegpt-google-sheet-add-on) and install the TimeGPT Google Sheets Add-On.
 
 ### (Option 2) Downloading the code
 
