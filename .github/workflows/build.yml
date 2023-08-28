@@ -8,6 +8,7 @@ jobs:
   build:
     name: Build all-in-one TIMEGPT.gs file
     runs-on: ubuntu-latest
+    permissions: write-all
 
     steps:
       - uses: actions/checkout@v3
@@ -26,8 +27,8 @@ jobs:
           printf "\n\n/////////////////////////////////////\n\n" >> $filepath
           cat $tmpfile >> $filepath
           echo "$filename generated!"
-          echo "::set-output name=filename::$filename"
-          echo "::set-output name=filepath::$filepath"
+          echo "filename=$filename" >> $GITHUB_ENV
+          echo "filepath=$filepath" >> $GITHUB_ENV
 
       - name: Upload TIMEGPT.gs as artifact
         uses: actions/upload-artifact@v3
