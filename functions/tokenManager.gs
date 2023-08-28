@@ -1,13 +1,13 @@
 const userProperties = PropertiesService.getUserProperties();
-let TOKEN = userProperties.getProperty('NIXTLA_TOKEN') || null;
+let TOKEN = userProperties.getProperty('TIMEGPT_TOKEN') || null;
 
 function setToken(token) {
-  userProperties.setProperty('NIXTLA_TOKEN', token);
+  userProperties.setProperty('TIMEGPT_TOKEN', token);
   TOKEN = token;
 }
 
 function getToken() {
-  const maskedToken = TOKEN.length
+  const maskedToken = TOKEN?.length
     ? "*".repeat(20) + TOKEN.slice(-4)
     : null;
   return maskedToken;

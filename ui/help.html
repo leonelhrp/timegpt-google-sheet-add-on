@@ -1,76 +1,102 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            padding: 1rem;
-            color: #1F2937;
-        }
-        h2, h3 {
-            color: #374151;
-        }
-        h2 {
-            margin-bottom: 1rem;
-        }
-        h3 {
-            margin-top: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        p, ul {
-            color: #4B5563;
-            margin-bottom: 1rem;
-        }
-        code {
-            display: block;
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-            padding: 0.5rem;
-            background: #F3F4F6;
-            border-radius: 0.375rem;
-        }
-    </style>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      padding: 1rem;
+      color: #1F2937;
+    }
+
+    h2,
+    h3,
+    h4 {
+      color: #374151;
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      margin-top: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p,
+    ul {
+      color: #4B5563;
+      margin-bottom: 1rem;
+    }
+
+    code {
+      display: block;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      background: #F3F4F6;
+      border-radius: 0.375rem;
+    }
+  </style>
 </head>
+
 <body>
-    <h2>Using Nixtla Functions</h2>
+  <h2>Using Nixtla Functions</h2>
 
-    <h4>Anomaly</h4>
-    <p>Use this function to detect anomalies in your data. The syntax is:</p>
-    <code>=NIXTLA_AUTOML_ANOMALY(range, sensibility)</code>
-    <p>Where:</p>
-    <ul>
-        <li><code>range</code> is a range of cells containing timestamp and value data (two columns).</li>
-        <li><code>sensibility</code> is a number representing the sensibility of the anomaly detection.</li>
-    </ul>
+  <h4>Future Prediction</h4>
+  <p>Use this function to create a future prediction based on your data. The syntax is:</p>
+  <code>=TIMEGPT_FUTURE(range, fh, clean_ex_first, finetune_steps, freq, level)</code>
+  <p>Where:</p>
+  <ul>
+    <li><code>range</code> is a range of cells containing timestamp and value data (two columns).</li>
+    <li><code>fh</code> is a number representing the forecast steps.</li>
+    <li><code>clean_ex_first</code> (optional) a boolean indicating whether to clean exogenous variables before
+      training. Default is true.</li>
+    <li><code>finetune_steps</code> (optional) is a number of finetuning steps. Default is 0.</li>
+    <li><code>freq</code> is the frequency of data (e.g., 'D' for daily).</li>
+    <li><code>level</code> (optional) is a list of values representing the prediction intervals. E.g., [80, 90].
+    </li>
+  </ul>
 
-    <h4>Forecast</h4>
-    <p>Use this function to create a forecast based on your data. The syntax is:</p>
-    <code>=NIXTLA_AUTOML_FORECAST(range, fh)</code>
-    <p>Where:</p>
-    <ul>
-        <li><code>range</code> is a range of cells containing timestamp and value data (two columns).</li>
-        <li><code>fh</code> is a number representing the forecast steps.</li>
-    </ul>
+  <h4>Anomaly Detection</h4>
+  <p>Use this function to predict time series data for the in-sample period (historical period). The syntax is:</p>
+  <code>=TIMEGPT_ANOMALY(range, freq, level)</code>
+  <p>Where:</p>
+  <ul>
+    <li><code>range</code> is a range of cells containing timestamp and value data (two columns).</li>
+    <li><code>freq</code> is the frequency of data (e.g., 'D' for daily).</li>
+    <li><code>level</code> (optional) is a list of values representing the prediction intervals. E.g., [80, 90].
+    </li>
+  </ul>
 
-    <h2>Generate Forecast and Anomaly graphs</h2>
+  <h2>Generate Forecast and Anomaly Detection graphs</h2>
 
-    <h4>Forecast</h4>
-    <p>To use Forecast Form, navigate to the "Run Prediction" submenu and click on "Forecast". A sidebar will appear.</p>
-    <p>Fill in the necessary details:</p>
-    <ul>
-        <li>"Range" - input the range of cells containing timestamp and value data.</li>
-        <li>"Forecast steps" - input the number of forecast steps you want.</li>
-    </ul>
-    <p>Click "Submit" to run the forecast.</p>
+  <h4>Forecast</h4>
+  <p>To use "Forecast Form", navigate to the "Run Forecast" submenu and click on "Future Prediction". A sidebar will
+    appear.
+  </p>
+  <p>Fill in the necessary details:</p>
+  <ul>
+    <li>"Range" - input the range of cells containing timestamp and value data.</li>
+    <li>"Forecast steps" - input the number of forecast steps you want.</li>
+    <li>"Frequency" - input the frequency of your data.</li>
+    <li>"Prediction Intervals" - input the levels for your prediction intervals (e.g., 80, 90).</li>
+  </ul>
+  <p>Click "Submit" to run the forecast.</p>
 
-    <h4>Anomaly</h4>
-    <p>To use Anomaly Form, navigate to the "Run Prediction" submenu and click on "Anomaly Detection". A sidebar will appear.</p>
-    <p>Fill in the necessary details:</p>
-    <ul>
-        <li>"Range" - input the range of cells containing timestamp and value data.</li>
-        <li>"Sensitivity" - input the sensitivity for the anomaly detection.</li>
-    </ul>
-    <p>Click "Submit" to run the anomaly detection.</p>
+  <h4>Anomaly Detection</h4>
+  <p>To use "Anomaly Detection Form", navigate to the "Run Forecast" submenu and click on "Anomaly Detection". A
+    sidebar will appear.
+  </p>
+  <p>Fill in the necessary details:</p>
+  <ul>
+    <li>"Range" - input the range of cells containing timestamp and value data.</li>
+    <li>"Frequency" - input the frequency of your data.</li>
+    <li>"Prediction Intervals" - input the levels for your prediction intervals (e.g., 80, 90).</li>
+  </ul>
+  <p>Click "Submit" to run the anomaly detection.</p>
 
 </body>
+
 </html>

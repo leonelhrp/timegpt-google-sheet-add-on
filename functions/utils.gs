@@ -35,3 +35,15 @@ const transformAnomalyResponse = (response) => {
 
   return result;
 }
+
+
+/**
+   * Displays a toast message on screen
+   */
+function toast(body, title, timeout) {
+  return SpreadsheetApp.getActive().toast(
+    body,
+    title || "TimeGPT Google Sheets",
+    timeout || 10 // In seconds
+  );
+}

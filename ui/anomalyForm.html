@@ -16,8 +16,10 @@
     }
 
     input[type="text"],
+    input[type="number"],
     select,
     .range-button {
+      width: 100%;
       box-sizing: border-box;
       height: 2rem;
       padding: 0.5rem;
@@ -128,36 +130,41 @@
     document.addEventListener("DOMContentLoaded", function () {
       const fromInput = document.getElementById("from");
       const toInput = document.getElementById("to");
-      const sensibilityInput = document.getElementById("sensibility");
-      const chartTypeInput = document.getElementById("chart-type");
+      const freqInput = document.getElementById("freq");
+      const levelInput = document.getElementById("level");
       const submitButton = document.getElementById("submit-button");
       const infoDiv = document.getElementById('info');
+      const warningDiv = document.getElementById('warning');
+      const validateTokenDiv = document.getElementById('validate-token');
+
+      fromInput.disabled = true;
+      toInput.disabled = true;
+      freqInput.disabled = true;
+      levelInput.disabled = true;
+      submitButton.disabled = true;
 
       google.script.run.withSuccessHandler(function (token) {
         if (!token) {
-          fromInput.disabled = true;
-          toInput.disabled = true;
-          sensibilityInput.disabled = true;
-          chartTypeInput.disabled = true;
           warningDiv.style.display = 'block';
         } else {
           fromInput.disabled = false;
           toInput.disabled = false;
-          sensibilityInput.disabled = false;
-          chartTypeInput.disabled = false;
+          freqInput.disabled = false;
+          levelInput.disabled = false;
+          submitButton.disabled = false;
           infoDiv.style.display = 'block';
         }
+        validateTokenDiv.style.display = 'none';
       }).getToken();
 
       function validateForm() {
-        const isValid = fromInput.value && toInput.value && sensibilityInput.value && chartTypeInput.value;
+        const isValid = fromInput.value && toInput.value && freqInput.value;
         submitButton.disabled = !isValid;
       }
 
       fromInput.addEventListener("input", validateForm);
       toInput.addEventListener("input", validateForm);
-      sensibilityInput.addEventListener("input", validateForm);
-      chartTypeInput.addEventListener("input", validateForm);
+      freqInput.addEventListener("input", validateForm);
 
       validateForm();
     });
@@ -165,15 +172,21 @@
       const from = document.getElementById('from').value;
       const to = document.getElementById('to').value;
       const range = from + ':' + to;
-      const sensibility = document.getElementById('sensibility').value;
-      const chartType = document.getElementById('chart-type').value;
+      const freq = document.getElementById('freq').value;
+      const level = document.getElementById('level').value;
 
       document.getElementById('loading').style.display = 'flex';
 
-      google.script.run.withSuccessHandler(function (outputData) {
+      google.script.run.withSuccessHandler(function (data) {
         document.getElementById('loading').style.display = 'none';
-        google.script.run.createAndInsertChart('Anomaly', chartType, outputData);
-      }).NIXTLA_AUTOML_ANOMALY(range, sensibility);
+        const chartOptions = {
+          action: "TimeGPT Anomaly",
+          data,
+          title: "Anomalies Detected with TimeGPT",
+          labels: ['Historical Data', 'Detected Anomaly', 'Lo', 'Up']
+        }
+        google.script.run.createAndInsertChart(chartOptions);
+      }).TIMEGPT_ANOMALY(range, freq, level);
     }
     function setSelectedRange() {
       const fromInput = document.getElementById('from');
@@ -199,27 +212,32 @@
 <body>
   <form id="anomaly-form">
     <div id="warning" class="warning" style="display: none;">
-      Please set your Nixtla token to continue.
+      <p>Please set your Nixtla token to continue.</p>
+      <p>Go to menu: TimeGPT > Configuration > Set Token</p>
     </div>
     <p id="info" class="info" style="display: none;">
-      Please use the 'Select Range' button to provide the required data range. Once selected, specify the
-      'Sensibility', and select the 'Chart Type' to generate your anomaly detection and its respective chart.
+      Please use the 'Select Range' button to provide the required data range.
     </p>
-    <div class="flex-container">
-      <div id="loading"></div>
-    </div>
+    <p id="validate-token" class="info">
+      Validating if token exists...
+    </p>
     <div class="flex-container">
       <input type="text" id="from" name="from" placeholder="From">
       <input type="text" id="to" name="to" placeholder="To">
       <button type="button" onclick="setSelectedRange()" title="Use Selected Range" class="range-button">⌖</button>
     </div>
     <span id="range-error" class="error-message"></span>
-    <div class="flex-container">
-      <input type="text" id="sensibility" name="sensibility"
-        onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="Enter Sensibility">
-      <select id="chart-type" name="chart-type">
-        <option value="LINE">Line Chart</option>
+    <div>
+      <select id="freq" name="freq">
+        <option value="" disabled selected>Frequency (freq)</option>
+        <option value="D">Daily (D)</option>
+        <option value="M">Monthly (M)</option>
+        <option value="H">Hourly (H)</option>
+        <option value="W">Weekly (W)</option>
       </select>
+    </div>
+    <div>
+      <input type="text" id="level" name="level" placeholder="Level (e.g., 80,90)">
     </div>
     <div id="loading"></div>
     <input id="submit-button" type="button" value="Get Anomaly" onclick="submitForm()" disabled><br><br>

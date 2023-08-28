@@ -1,0 +1,27 @@
+{
+  "name": "nixtla-google-sheet-extension",
+  "version": "1.0.3",
+  "description": "TimeGPT extension for Google Sheets",
+  "main": "main.gs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leonelhrp/nixtla-google-sheet-extension.git"
+  },
+  "keywords": [
+    "nixtla",
+    "spreadsheet",
+    "google-sheets",
+    "google-apps-script",
+    "google-workspace",
+    "google-workspace-add-on"
+  ],
+  "author": "leonelhrp",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/leonelhrp/nixtla-google-sheet-extension/issues"
+  },
+  "homepage": "https://github.com/leonelhrp/nixtla-google-sheet-extension#readme",
+  "devDependencies": {
+    "@google/clasp": "^2.4.2"
+  }
+}

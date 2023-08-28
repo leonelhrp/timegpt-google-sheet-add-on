@@ -1,7 +1,29 @@
 {
   "timeZone": "America/Chicago",
-  "dependencies": {
-  },
+  "dependencies": {},
   "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+  "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/script.container.ui"
+  ],
+  "addOns": {
+    "common": {
+      "name": "TimeGPT Google Sheets",
+      "logoUrl": "https://raw.githubusercontent.com/leonelhrp/nixtla-google-sheet-extension/main/img/nixtla-google-sheets-logo.png"
+    },
+    "sheets": {
+      "homepageTrigger": {
+        "enabled": false,
+        "runFunction": ""
+      }
+    }
+  },
+  "executionApi": {
+    "access": "ANYONE"
+  },
+  "urlFetchWhitelist": [
+    "https://dashboard.nixtla.io/"
+  ]
 }

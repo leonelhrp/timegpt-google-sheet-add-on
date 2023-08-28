@@ -96,7 +96,7 @@
     document.addEventListener("DOMContentLoaded", function () {
       const tokenInput = document.getElementById('token-input');
       const tokenInputMask = document.getElementById('token-input-mask');
-      const tokenInfo = document.querySelector('.info');
+      const tokenInfo = document.getElementById('token-info');
       const submitButton = document.getElementById('submit-button');
       const loadingDiv = document.getElementById('loading');
       const saveStatusDiv = document.getElementById('save-status');
@@ -128,6 +128,7 @@
       document.getElementById('loading').style.display = 'none';
       document.getElementById('save-status').style.display = 'flex';
       document.getElementById('save-status').textContent = 'Token saved successfully.';
+      document.getElementById('token-info').style.display = 'none';
     }
     function onFailure() {
       document.getElementById('loading').style.display = 'none';
@@ -138,7 +139,7 @@
 
 <body>
   <form id="token-form">
-    <p class="info">Enter your Nixtla token below</p>
+    <p id="token-info" class="info">Enter your Nixtla token below</p>
     <div class="flex-container">
       <div id="loading"></div>
       <div id="save-status" class="success"></div>
