@@ -29,6 +29,8 @@ jobs:
           echo "$filename generated!"
           echo "filename=$filename" >> $GITHUB_ENV
           echo "filepath=$filepath" >> $GITHUB_ENV
+          echo "filename=$filename" >> $GITHUB_OUTPUT_PATH
+          echo "filepath=$filepath" >> $GITHUB_OUTPUT_PATH
 
       - name: Upload TIMEGPT.gs as artifact
         uses: actions/upload-artifact@v3
