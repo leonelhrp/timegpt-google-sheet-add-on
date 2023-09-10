@@ -1,25 +1,27 @@
-name: CI - Build TIMEGPT.gs
-
+name: Build and Release
 on:
   release:
     types: [published]
 
+env:
+  OUTPUT_PATH: output
+
 jobs:
   build:
-    name: Build all-in-one TIMEGPT.gs file
     runs-on: ubuntu-latest
-    permissions: write-all
-
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Build TIMEGPT.gs
         id: build_file
         run: |
           filename=TIMEGPT.gs
-          filepath=_build/$filename
-          tmpfile=_build/tmp.gs
-          mkdir _build
+          filepath=$OUTPUT_PATH/$filename
+          tmpfile=$OUTPUT_PATH/tmp.gs
+          mkdir $OUTPUT_PATH
           find . -type f \( -iname "*.gs" ! -iname "config.gs" ! -iname "main.gs" ! -iname "tmp.gs" \) -exec cat > $tmpfile {} +
           cat config.gs > $filepath
           printf "\n\n/////////////////////////////////////\n\n" >> $filepath
@@ -29,17 +31,17 @@ jobs:
           echo "$filename generated!"
           echo "filename=$filename" >> $GITHUB_ENV
           echo "filepath=$filepath" >> $GITHUB_ENV
-          echo "filename=$filename" >> $GITHUB_OUTPUT_PATH
-          echo "filepath=$filepath" >> $GITHUB_OUTPUT_PATH
+          echo "filename=$filename" >> $OUTPUT_PATH/$GITHUB_RUN_ID
+          echo "filepath=$filepath" >> $OUTPUT_PATH/$GITHUB_RUN_ID
 
       - name: Upload TIMEGPT.gs as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.build_file.outputs.filename }}
           path: ${{ steps.build_file.outputs.filepath }}
 
       - name: Upload appsscript.json as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: appsscript.json
           path: appsscript.json
