@@ -43,24 +43,7 @@ Once you've ticked off these preliminary steps, you're all set to leverage the p
 
 Visit the [Google Workspace Marketplace](https://workspace.google.com/marketplace/app/timegpt-google-sheet-add-on) and install the TimeGPT Google Sheets Add-On.
 
-### (Option 2) Downloading the code
-
-Just [download the latest **TIMEGPT.gs**](https://github.com/leonelhrp/timegpt-forecaster-next/releases/latest/download/TIMEGPT.gs) _all-in-one_ file + [**appsscript.json**](https://github.com/leonelhrp/timegpt-forecaster-next/releases/latest/download/appsscript.json) and **copy & paste** its contents by:
-
-1. With your desired `Google Spreadsheet` opened, go to `Tools -> Script editor`.
-    * This will open an editor in a new page with a `Code.gs` file containing an empty function.
-    * Remove any content from `Code.gs` and save the project at `File -> Save`. Name it as you like.
-2. Go to project properties and ensure the `Show "appsscript.json" manifest file in editor` checkbox is selected.
-3. Back in the code editor, select the `Code.gs` file and paste the content from the downloaded `TIMEGPT.gs` file.
-4. Repeat the same for `appsscript.json` and optionally set your desired timezone.
-5. Save the project again and refresh your Google Spreadsheet (press `F5` on the browser).
-    * Once reloaded, you should see a small notification at the bottom-right corner.
-6. Go to the `TimeGPT` menu on your spreadsheet's main toolbar and click on the `Authorize add-on!` item.
-7. A Google dialog should appear for permissions. Go through the steps and click `Allow`.
-    * The popup will close, and you might not see immediate changes on your spreadsheet.
-8. After the add-on is authorized, repeat step `6` (click `Authorize add-on!` again), and you're set!
-
-### (Option 3) For Developers 🚀
+### (Option 2) For Developers 🚀
 
 To integrate the TimeGPT Google Sheets Add-On into your Google Spreadsheets locally, you'll require [node](https://nodejs.org) and [clasp](https://github.com/google/clasp).
 
