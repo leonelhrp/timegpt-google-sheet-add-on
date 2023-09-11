@@ -69,7 +69,7 @@ To integrate the TimeGPT Google Sheets Add-On into your Google Spreadsheets loca
 
 Use this function to create a future prediction based on your data. The syntax is:
 ```
-=TIMEGPT_FUTURE(range, fh, clean_ex_first, finetune_steps, freq, level)
+=TIMEGPT_FUTURE(range; fh; clean_ex_first; finetune_steps; freq; level)
 ```
 
 Where:
@@ -84,7 +84,7 @@ Where:
 
 Use this function to predict time series data for the in-sample period (historical period). The syntax is:
 ```
-=TIMEGPT_ANOMALY(range, freq, level)
+=TIMEGPT_ANOMALY(range; freq; level)
 ```
 
 Where:
