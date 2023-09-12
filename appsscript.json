@@ -11,12 +11,18 @@
   "addOns": {
     "common": {
       "name": "TimeGPT Google Sheets",
-      "logoUrl": "https://raw.githubusercontent.com/leonelhrp/timegpt-google-sheet-add-on/main/img/nixtla-google-sheets-logo.png"
+      "logoUrl": "https://raw.githubusercontent.com/leonelhrp/timegpt-google-sheet-add-on/main/img/nixtla-google-sheets-logo.png",
+      "universalActions": [
+        {
+          "label": "Open Support URL",
+          "openLink": "https://dashboard.nixtla.io/terms-of-service-and-support.html"
+        }
+      ]
     },
     "sheets": {
       "homepageTrigger": {
-        "enabled": false,
-        "runFunction": ""
+        "enabled": true,
+        "runFunction": "showSidebar"
       }
     }
   },
