@@ -58,11 +58,13 @@ function apiPostRequest(path, requestData) {
 }
 
 function TIMEGPT_FUTURE(range, fh, clean_ex_first, finetune_steps, freq, level) {
+  let levels = [];
+
   if (level) {
-    level = level.replace(/\s+/g, '').split(',').map(Number);
+    levels = level.replace(/\s+/g, '').split(',').map(Number);
   }
 
-  const requestData = getRequestData(range, 'forecast', fh, clean_ex_first, finetune_steps, freq, level);
+  const requestData = getRequestData(range, 'forecast', fh, clean_ex_first, finetune_steps, freq, levels);
 
   console.log('TIMEGPT_FUTURE -> requestData: ', JSON.stringify(requestData, null, 2));
 
@@ -70,20 +72,35 @@ function TIMEGPT_FUTURE(range, fh, clean_ex_first, finetune_steps, freq, level) 
 
   console.log('TIMEGPT_FUTURE -> responseData: ', JSON.stringify(responseData, null, 2));
 
-  const outputData = [['Timestamp', 'Value', 'Low', 'High']];
+  const outputData = [['Timestamp', 'Value']];
+
+  // Vamos a agregar las columnas de intervalos de confianza si existen en la respuesta
+  for (let l of levels) {
+    if (responseData.data[`lo-${l}`] && responseData.data[`hi-${l}`]) {
+      outputData[0].push(`Low ${l}%`, `High ${l}%`);
+    }
+  }
+
   for (let i = 0; i < responseData.data.timestamp.length; i++) {
-    outputData.push([
+    const row = [
       responseData.data.timestamp[i],
-      responseData.data.value[i],
-      responseData.data[`lo-${level}`][i],
-      responseData.data[`hi-${level}`][i]
-    ]);
+      responseData.data.value[i]
+    ];
+
+    for (let l of levels) {
+      if (responseData.data[`lo-${l}`] && responseData.data[`hi-${l}`]) {
+        row.push(responseData.data[`lo-${l}`][i], responseData.data[`hi-${l}`][i]);
+      }
+    }
+
+    outputData.push(row);
   }
 
   console.log('TIMEGPT_FUTURE -> outputData: ', JSON.stringify(outputData, null, 2));
 
   return outputData;
 }
+
 
 function TIMEGPT_ANOMALY(range, freq, level) {
   if (level) {
